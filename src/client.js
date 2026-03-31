@@ -222,6 +222,9 @@ class RPCClient extends EventEmitter {
         },
       });
       const data = await response.json();
+      if (!response.ok || !data.access_token) {
+        throw new Error(`Token endpoint error: ${JSON.stringify(data)}`);
+      }
       return data.access_token;
     }
 
