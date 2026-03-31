@@ -194,7 +194,7 @@ class RPCClient extends EventEmitter {
    * @returns {Promise}
    * @private
    */
-  async authorize({ scopes, clientSecret, rpcToken, redirectUri, prompt, tokenEndpoint } = {}) {
+  async authorize({ scopes, clientSecret, rpcToken, redirectUri, prompt, tokenEndpoint, tokenEndpointHeaders } = {}) {
     if (clientSecret && rpcToken === true) {
       const body = await this.fetch('POST', '/oauth2/token/rpc', {
         data: new URLSearchParams({
@@ -216,7 +216,10 @@ class RPCClient extends EventEmitter {
       const response = await fetch(tokenEndpoint, {
         method: 'POST',
         body: new URLSearchParams({ code }),
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          ...(tokenEndpointHeaders || {})
+        },
       });
       const data = await response.json();
       return data.access_token;
